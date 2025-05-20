@@ -1,0 +1,51 @@
+name: Deploy to Remote Server
+
+on:
+  push:
+    branches:
+      - myevent-app-samson
+
+jobs:
+  deploy:
+    name: Build and Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build backend image
+        run: |
+          docker build -t ghcr.io/${{ github.repository_owner }}/myevent-backend:latest ./TP_EVENT_API
+
+      - name: Build frontend image
+        run: |
+          docker build -t ghcr.io/${{ github.repository_owner }}/myevent-frontend:latest ./TP_EVENT_WEB_APP
+
+      - name: Push backend image
+        run: |
+          docker push ghcr.io/${{ github.repository_owner }}/myevent-backend:latest
+
+      - name: Push frontend image
+        run: |
+          docker push ghcr.io/${{ github.repository_owner }}/myevent-frontend:latest
+
+      - name: Deploy on remote server via SSH
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            docker pull ghcr.io/${{ github.repository_owner }}/myevent-backend:latest
+            docker pull ghcr.io/${{ github.repository_owner }}/myevent-frontend:latest
+            cd /home/${{ secrets.SSH_USER }}/myevent-app  # adapte ce chemin selon ton serveur
+            docker compose down
+            docker compose up -d --remove-orphans
