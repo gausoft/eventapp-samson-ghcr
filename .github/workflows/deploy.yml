@@ -1,20 +1,19 @@
 name: Deploy to Remote Server
 
 on:
-  push:
-    branches:
-      - myevent-app-samson
+  workflow_run:
+    workflows: ["Build and Push Docker Images"]
+    types:
+      - completed
 
 jobs:
   deploy:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
       - name: Setup SSH Agent
         uses: webfactory/ssh-agent@v0.7.0
         with:
@@ -24,6 +23,7 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} '
             cd ~/apps/myevent-app &&
+            git pull origin myevent-app-samson &&
             docker compose pull &&
             docker compose down &&
             docker compose up -d
