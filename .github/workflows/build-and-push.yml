@@ -35,11 +35,12 @@ jobs:
       # .github/workflows/build-and-push.yml
       - name: Build and push backend
         run: |
-          docker build -t ghcr.io/${{ github.repository_owner }}/eventapp-backend ./TP_EVENT_API
-          docker push ghcr.io/${{ github.repository_owner }}/eventapp-backend
+          docker build -t ghcr.io/${{ github.actor }}/eventapp-backend ./TP_EVENT_API
+          docker push ghcr.io/${{ github.actor }}/eventapp-backend
 
       - name: Build and push frontend
         run: |
-          docker build -t ghcr.io/${{ github.repository_owner }}/eventapp-frontend ./TP_EVENT_WEB_APP
-          docker push ghcr.io/${{ github.repository_owner }}/eventapp-frontend
+         docker build -t ghcr.io/${{ github.actor }}/eventapp-frontend ./TP_EVENT_WEB_APP
+         docker push ghcr.io/${{ github.actor }}/eventapp-frontend
+
 
