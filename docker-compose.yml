@@ -17,6 +17,7 @@ services:
   backend:
     build: ./TP_EVENT_API
     container_name: event_backend
+    image: ghcr.io/samwin25/eventapp-backend
     depends_on:
       - postgres
     environment:
@@ -34,6 +35,7 @@ services:
   frontend:
     build: ./TP_EVENT_WEB_APP
     container_name: event_frontend
+    image: ghcr.io/samwin25/eventapp-frontend
     depends_on:
       - backend
     ports:

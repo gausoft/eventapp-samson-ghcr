@@ -1,0 +1,35 @@
+name: Build and Push Docker Images
+
+on:
+  push:
+    branches:
+      - myevent-app-samson
+      - develop
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push backend
+        run: |
+          docker build -t ghcr.io/${{ github.repository_owner }}/eventapp-backend ./backend
+          docker push ghcr.io/${{ github.repository_owner }}/eventapp-backend
+
+      - name: Build and push frontend
+        run: |
+          docker build -t ghcr.io/${{ github.repository_owner }}/eventapp-frontend ./frontend
+          docker push ghcr.io/${{ github.repository_owner }}/eventapp-frontend
