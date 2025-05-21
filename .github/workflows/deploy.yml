@@ -20,9 +20,9 @@ jobs:
 
       - name: Deploy with Docker Compose
         run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
-            cd ~/apps/myevent-app || exit
-            docker compose pull
-            docker compose down
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} '
+            cd ~/apps/myevent-app &&
+            docker compose pull &&
+            docker compose down &&
             docker compose up -d
-          EOF
+          '
