@@ -1,25 +1,23 @@
-version: '3.8'
-
 services:
   postgres:
     image: postgres:17
     container_name: event_postgres
-    restart: unless-stopped
+    restart: always
     environment:
       POSTGRES_USER: eventuser
       POSTGRES_PASSWORD: eventpass
       POSTGRES_DB: eventdb
     volumes:
       - pgdata:/var/lib/postgresql/data
-    # ports:                       # <-- Supprimé pour sécurité (accès local uniquement)
-    #   - "5433:5432"
+    ports:
+      - "5433:5432"
     networks:
       - eventnet
 
   backend:
-    image: ghcr.io/samwin25/eventapp-backend:latest
+    build: ./TP_EVENT_API
     container_name: event_backend
-    restart: unless-stopped
+    image: ghcr.io/samwin25/eventapp-backend
     depends_on:
       - postgres
     environment:
@@ -35,15 +33,15 @@ services:
       - eventnet
 
   frontend:
-    image: ghcr.io/samwin25/eventapp-frontend:latest
+    build: ./TP_EVENT_WEB_APP
     container_name: event_frontend
-    restart: unless-stopped
+    image: ghcr.io/samwin25/eventapp-frontend
     depends_on:
       - backend
-    environment:
-      - REACT_APP_API_URL=http://backend:9002
     ports:
       - "8082:8082"
+    environment:
+      - REACT_APP_API_URL=http://localhost:9002
     networks:
       - eventnet
 
