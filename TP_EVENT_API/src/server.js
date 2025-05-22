@@ -4,7 +4,7 @@ const sequelize = require('./config/database');
 const { Event, Invitee } = require('./models');
 const eventRoutes = require('./routes/eventRoutes');
 const inviteeRoutes = require('./routes/inviteeRoutes');
-const cors = require('cors');
+
 
 // Chargement des variables d'environnement
 dotenv.config();
@@ -66,8 +66,6 @@ async function startServer() {
     console.error('Impossible de se connecter à la base de données:', error);
   }
 }
-app.use(cors({
-  origin: ['http://157.180.38.74:8082', 'http://localhost:8082']  // Autorise les deux
-}));
+
 // Démarrer le serveur
 startServer(); 

@@ -7,7 +7,7 @@ const { validateEventCreation } = require('../middleware/validators');
 router.post('/', validateEventCreation, eventController.createEvent);
 
 // Route pour récupérer tous les événements avec leurs invités
-router.get('/api/events', eventController.getAllEvents);
+router.get('/', eventController.getAllEvents);
 
 
 // Route pour récupérer un événement spécifique avec ses invités
